@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SailingBoatPathfinder.Data", "SailingBoatPathfinder.Data\SailingBoatPathfinder.Data.csproj", "{C43065CF-20E6-4D6E-82B9-3D017B1238C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SailingBoatPathfinder.App", "SailingBoatPathfinder.App\SailingBoatPathfinder.App.csproj", "{7C0DBEDF-EA60-4724-8CB1-7BBAE15F2C53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SailingBoatPathfinder.Logic", "SailingBoatPathfinder.Logic\SailingBoatPathfinder.Logic.csproj", "{3745223F-4B6F-4E4C-8DF6-7C9D5C4DDC79}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C43065CF-20E6-4D6E-82B9-3D017B1238C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C43065CF-20E6-4D6E-82B9-3D017B1238C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C43065CF-20E6-4D6E-82B9-3D017B1238C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C43065CF-20E6-4D6E-82B9-3D017B1238C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C0DBEDF-EA60-4724-8CB1-7BBAE15F2C53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C0DBEDF-EA60-4724-8CB1-7BBAE15F2C53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C0DBEDF-EA60-4724-8CB1-7BBAE15F2C53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C0DBEDF-EA60-4724-8CB1-7BBAE15F2C53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3745223F-4B6F-4E4C-8DF6-7C9D5C4DDC79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3745223F-4B6F-4E4C-8DF6-7C9D5C4DDC79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3745223F-4B6F-4E4C-8DF6-7C9D5C4DDC79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3745223F-4B6F-4E4C-8DF6-7C9D5C4DDC79}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
