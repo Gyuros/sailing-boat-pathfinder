@@ -6,4 +6,12 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SailingBoatPathfinder.Data\SailingBoatPathfinder.Data.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Geolocation" Version="1.2.1" />
+    </ItemGroup>
+
 </Project>
