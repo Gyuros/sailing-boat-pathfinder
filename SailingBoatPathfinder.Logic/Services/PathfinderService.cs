@@ -8,40 +8,34 @@ namespace SailingBoatPathfinder.Logic.Services;
 
 public class PathfinderService
 {
-    private readonly GeographicPointProviderService _geographicPointProviderService;
+    private readonly CoordinateProviderService _coordinateProviderService;
     private readonly TravellingTimeService _travellingTimeService;
 
     private readonly Dictionary<Coordinate, BoatPosition> _boatPositionCache = new Dictionary<Coordinate, BoatPosition>();
 
-    public PathfinderService(GeographicPointProviderService geographicPointProviderService,
+    public PathfinderService(CoordinateProviderService coordinateProviderService,
         TravellingTimeService travellingTimeService)
     {
-        _geographicPointProviderService = geographicPointProviderService;
+        _coordinateProviderService = coordinateProviderService;
         _travellingTimeService = travellingTimeService;
     }
 
-    // végig iterálni a checkpointokon
-    // mindegyik checkpoint pár között külön lefuttatni az A* algoritumst
-    // service-től lekérdezni a következő geo pontot
-
-    // current szomszédainak lekérdezése
-    // minden szomszédra kiszámoljuk az időt amennyi az odajutáshoz kell
-    // elmentjuk az adott szakasz, plusz az az előtti szakasz útidejének összegét
-    // hozzáadjuk ehhez a heurisztikát (légvonalban szükséges idő)
-    // ekkor lesz egy pontunk, aminél tudjuk, hogy oda mennyi idő volt eljutni és innen kb mennyi idő lesz még, legyen ez Tkb (time kb)
-    // ezt a pontot betesszük a Neighbours listába
-
-    // Neighbours-ből kiszedjük, melynek a legkisebb a Tkb-je
-    // beállítjuk ezt currentnek, ismétlés
     public List<BoatPosition> FindPath(List<Coordinate> checkpoints, Boat boat, DateTime startTime)
     {
+        checkpoints = checkpoints.Select(coordinate => _coordinateProviderService.RoundCoordinate(coordinate)).ToList();
         Coordinate current = checkpoints.First();
         List<BoatPosition> path = new List<BoatPosition>();
+        BoatPosition? partialLast = null;
 
         foreach (Coordinate next in checkpoints.Skip(1))
         {
-            path.AddRange(FindPathBetween(current, next, startTime));
-            // TODO: összekapcsolni a checkpointok közötti rész útvonalakat
+            List<BoatPosition> partialPath = FindPathBetween(current, next, startTime);
+            
+            BoatPosition partialFirst = partialPath.FirstOrDefault()!;
+            partialFirst.From = partialLast;
+            partialLast = partialPath.LastOrDefault();
+            
+            path.AddRange(partialPath);
             current = next;
         }
 
@@ -61,7 +55,6 @@ public class PathfinderService
         {
             BoatPosition current = openPositions.MinBy(neighbour => neighbour.TimeFromStartToFinish)!;
 
-            // TODO: override equal hogy nagyjából közel legyen a 2 koordináta (pl 100 méteres körzetében
             if (current.Coordinate.Equals(finish))
             {
                 return ConstructPath(current);
@@ -69,16 +62,19 @@ public class PathfinderService
 
             openPositions.Remove(current);
 
-            List<BoatPosition> currentNeighbours = _geographicPointProviderService
+            List<BoatPosition> currentNeighbours = _coordinateProviderService
                 .GetNeighbours(current.Coordinate)
-                .Select(geoPosition => _boatPositionCache.GetOrCreate(geoPosition,
-                    new BoatPosition(current, double.PositiveInfinity, double.PositiveInfinity, geoPosition)))
+                .Select(geoPosition => _boatPositionCache.GetOrCreate(
+                        geoPosition,
+                        new BoatPosition(current, double.PositiveInfinity, double.PositiveInfinity, geoPosition)
+                    )
+                )
                 .ToList();
 
             foreach (BoatPosition currentNeighbour in currentNeighbours)
             {
-                DateTime timeOfTravel = startTime.Add(TimeSpan.FromMicroseconds(current.TimeFromStart));
-                double timeToTravel = _travellingTimeService.TimeToTravel(current.Coordinate, currentNeighbour.Coordinate, timeOfTravel);
+                DateTime timeOfTravelFromCurrent = startTime.Add(TimeSpan.FromMicroseconds(current.TimeFromStart));
+                double timeToTravel = _travellingTimeService.TimeToTravel(current.Coordinate, currentNeighbour.Coordinate, timeOfTravelFromCurrent);
                 double timeFromStartToNeighbour = current.TimeFromStart + timeToTravel;
 
                 if (!(timeFromStartToNeighbour < currentNeighbour.TimeFromStart))
@@ -88,7 +84,8 @@ public class PathfinderService
 
                 currentNeighbour.From = current;
                 currentNeighbour.TimeFromStart = timeFromStartToNeighbour;
-                currentNeighbour.EstimatedTimeToFinish = _travellingTimeService.TimeToTravel(start, finish, startTime);
+                DateTime timeOfTravelFromCurrentNeighbour = timeOfTravelFromCurrent.Add(TimeSpan.FromMicroseconds(timeToTravel));
+                currentNeighbour.EstimatedTimeToFinish = _travellingTimeService.TimeToTravel(start, finish, timeOfTravelFromCurrentNeighbour);
 
                 if (!openPositions.Contains(currentNeighbour))
                 {
