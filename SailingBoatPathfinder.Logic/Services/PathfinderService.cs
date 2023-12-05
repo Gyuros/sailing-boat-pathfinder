@@ -22,7 +22,7 @@ public class PathfinderService
 
     public List<BoatPosition> FindPath(List<Coordinate> checkpoints, Boat boat, DateTime startTime)
     {
-        checkpoints = checkpoints.Select(coordinate => _coordinateProviderService.RoundCoordinate(coordinate)).ToList();
+        checkpoints.ForEach(coordinate => _coordinateProviderService.RoundCoordinate(coordinate));
         Coordinate current = checkpoints.First();
         List<BoatPosition> path = new List<BoatPosition>();
         BoatPosition? partialLast = null;
