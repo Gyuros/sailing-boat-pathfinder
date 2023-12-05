@@ -29,7 +29,7 @@ public class PathfinderService
 
         foreach (Coordinate next in checkpoints.Skip(1))
         {
-            List<BoatPosition> partialPath = FindPathBetween(current, next, startTime);
+            List<BoatPosition> partialPath = FindPathBetween(current, next, startTime, boat);
             
             BoatPosition partialFirst = partialPath.FirstOrDefault()!;
             partialFirst.From = partialLast;
@@ -42,9 +42,9 @@ public class PathfinderService
         return path;
     }
 
-    private List<BoatPosition> FindPathBetween(Coordinate start, Coordinate finish, DateTime startTime)
+    private List<BoatPosition> FindPathBetween(Coordinate start, Coordinate finish, DateTime startTime, Boat boat)
     {
-        double estimatedTimeFromStartToFinish = _travellingTimeService.TimeToTravel(start, finish, startTime);
+        double estimatedTimeFromStartToFinish = _travellingTimeService.EstimatedTimeToTravel(start, finish, startTime);
         BoatPosition startPosition = new BoatPosition(null, 0, estimatedTimeFromStartToFinish, start);
         List<BoatPosition> openPositions = new List<BoatPosition>()
         {
@@ -74,7 +74,7 @@ public class PathfinderService
             foreach (BoatPosition currentNeighbour in currentNeighbours)
             {
                 DateTime timeOfTravelFromCurrent = startTime.Add(TimeSpan.FromMicroseconds(current.TimeFromStart));
-                double timeToTravel = _travellingTimeService.TimeToTravel(current.Coordinate, currentNeighbour.Coordinate, timeOfTravelFromCurrent);
+                double timeToTravel = _travellingTimeService.TimeToTravel(current.Coordinate, currentNeighbour.Coordinate, timeOfTravelFromCurrent, boat);
                 double timeFromStartToNeighbour = current.TimeFromStart + timeToTravel;
 
                 if (!(timeFromStartToNeighbour < currentNeighbour.TimeFromStart))
@@ -85,7 +85,7 @@ public class PathfinderService
                 currentNeighbour.From = current;
                 currentNeighbour.TimeFromStart = timeFromStartToNeighbour;
                 DateTime timeOfTravelFromCurrentNeighbour = timeOfTravelFromCurrent.Add(TimeSpan.FromMicroseconds(timeToTravel));
-                currentNeighbour.EstimatedTimeToFinish = _travellingTimeService.TimeToTravel(start, finish, timeOfTravelFromCurrentNeighbour);
+                currentNeighbour.EstimatedTimeToFinish = _travellingTimeService.EstimatedTimeToTravel(start, finish, timeOfTravelFromCurrentNeighbour);
 
                 if (!openPositions.Contains(currentNeighbour))
                 {
