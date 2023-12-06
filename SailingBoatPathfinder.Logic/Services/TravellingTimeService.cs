@@ -1,6 +1,5 @@
-using System.Numerics;
 using Geolocation;
-using SailingBoatPathfinder.Data.Entities;
+using SailingBoatPathfinder.Data.Models;
 using SailingBoatPathfinder.Logic.Models;
 
 namespace SailingBoatPathfinder.Logic.Services;

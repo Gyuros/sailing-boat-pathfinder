@@ -1,8 +1,8 @@
-﻿namespace SailingBoatPathfinder.Data.Entities
+﻿namespace SailingBoatPathfinder.Data.Models
 {
     public class BoatProperty
     {
-        public int WindVelocity { get; set; }
+        public double WindVelocity { get; set; }
 
         public double BeatAngle { get; set; }
 

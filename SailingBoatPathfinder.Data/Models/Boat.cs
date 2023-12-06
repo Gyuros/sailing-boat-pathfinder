@@ -1,4 +1,4 @@
-﻿namespace SailingBoatPathfinder.Data.Entities
+﻿namespace SailingBoatPathfinder.Data.Models
 {
     public class Boat
     {

@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Geolocation;
-using SailingBoatPathfinder.Data.Entities;
+using SailingBoatPathfinder.Data.Models;
 using SailingBoatPathfinder.Logic.Extensions;
 using SailingBoatPathfinder.Logic.Models;
 
