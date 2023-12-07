@@ -20,7 +20,7 @@ public class PathfinderService
         _travellingTimeService = travellingTimeService;
     }
 
-    public List<BoatPosition> FindPath(List<Coordinate> checkpoints, Boat boat, DateTime startTime)
+    public List<BoatPosition> FindPath(List<Coordinate> checkpoints, SailingBoat boat, DateTime startTime)
     {
         checkpoints.ForEach(coordinate => _coordinateProviderService.RoundCoordinate(coordinate));
         Coordinate current = checkpoints.First();
@@ -42,7 +42,7 @@ public class PathfinderService
         return path;
     }
 
-    private List<BoatPosition> FindPathBetween(Coordinate start, Coordinate finish, DateTime startTime, Boat boat)
+    private List<BoatPosition> FindPathBetween(Coordinate start, Coordinate finish, DateTime startTime, SailingBoat boat)
     {
         double estimatedTimeFromStartToFinish = _travellingTimeService.EstimatedTimeToTravel(start, finish, startTime);
         BoatPosition startPosition = new BoatPosition(null, 0, estimatedTimeFromStartToFinish, start);

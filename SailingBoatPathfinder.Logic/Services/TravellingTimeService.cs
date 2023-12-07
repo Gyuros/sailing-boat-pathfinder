@@ -15,7 +15,7 @@ public class TravellingTimeService
         _polarDiagramService = polarDiagramService;
     }
 
-    public double TimeToTravel(Coordinate from, Coordinate to, DateTime timeOfTravel, Boat boat)
+    public double TimeToTravel(Coordinate from, Coordinate to, DateTime timeOfTravel, SailingBoat boat)
     {
         WindData wind = _windProviderService.GetWindData(from, timeOfTravel);
         
