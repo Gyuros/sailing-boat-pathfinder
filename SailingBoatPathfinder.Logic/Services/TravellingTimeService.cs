@@ -29,10 +29,4 @@ public class TravellingTimeService
         
         return boatSpeed / distance + wind.Delay;
     }
-
-    public double EstimatedTimeToTravel(Coordinate from, Coordinate to, DateTime timeOfTravel)
-    {
-        // felbontom a from-to útvonalat több koordinátára, de rosszabb felbontással mint ahogy normál utat számolok
-        throw new NotImplementedException();
-    }
 }

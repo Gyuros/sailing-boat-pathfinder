@@ -44,7 +44,7 @@ public class PathfinderService
 
     private List<BoatPosition> FindPathBetween(Coordinate start, Coordinate finish, DateTime startTime, SailingBoat boat)
     {
-        double estimatedTimeFromStartToFinish = _travellingTimeService.EstimatedTimeToTravel(start, finish, startTime);
+        double estimatedTimeFromStartToFinish = _travellingTimeService.TimeToTravel(start, finish, startTime, boat);
         BoatPosition startPosition = new BoatPosition(null, 0, estimatedTimeFromStartToFinish, start);
         List<BoatPosition> openPositions = new List<BoatPosition>()
         {
@@ -85,7 +85,7 @@ public class PathfinderService
                 currentNeighbour.From = current;
                 currentNeighbour.TimeFromStart = timeFromStartToNeighbour;
                 DateTime timeOfTravelFromCurrentNeighbour = timeOfTravelFromCurrent.Add(TimeSpan.FromMicroseconds(timeToTravel));
-                currentNeighbour.EstimatedTimeToFinish = _travellingTimeService.EstimatedTimeToTravel(start, finish, timeOfTravelFromCurrentNeighbour);
+                currentNeighbour.EstimatedTimeToFinish = _travellingTimeService.TimeToTravel(start, finish, timeOfTravelFromCurrentNeighbour, boat);
 
                 if (!openPositions.Contains(currentNeighbour))
                 {

@@ -16,10 +16,14 @@ using SailingBoatPathfinder.Logic.Services;
 
 
 var service = new PolarDiagramService();
-var result = service.IsUnderBeatAngle(150, 150, 160, 165, 6, 8,162.5, 7);
+// var result = service.IsUnderBeatAngleOrOverGybeAngle(150, 150, 160, 165, 6, 8,162.5, 7);
+
+var topLeft = new SailingBoatPolarData() { WindVelocity = 10, WindAngle = 20, BoatVelocity = 16 };
+var topRight = new SailingBoatPolarData() { WindVelocity = 20, WindAngle = 20, BoatVelocity = 14 };
+var bottomLeft = new SailingBoatPolarData() { WindVelocity = 10, WindAngle = 10, BoatVelocity = 10 };
+var bottomRight = new SailingBoatPolarData() { WindVelocity = 20, WindAngle = 10, BoatVelocity = 12 };
+var result = service.NearestNeighbourInterpolation(topLeft, topRight, bottomRight, bottomLeft, 12.5, 12.5);
 Console.WriteLine(result);
-
-
 
 
 
