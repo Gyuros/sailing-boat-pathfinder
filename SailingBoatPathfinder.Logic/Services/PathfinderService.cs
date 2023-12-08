@@ -42,6 +42,17 @@ public class PathfinderService
         return path;
     }
 
+    public double MaxDistance { get; set; } = double.PositiveInfinity;
+    private void Info(Coordinate start, Coordinate finish, Coordinate current, List<BoatPosition> openPositions)
+    {
+        var currDistance = GeoCalculator.GetDistance(finish, current,1, DistanceUnit.Kilometers);
+        if (currDistance < MaxDistance)
+        {
+            MaxDistance = currDistance;
+            Console.WriteLine($"{MaxDistance} {openPositions.Count}");
+        }
+    }
+
     private List<BoatPosition> FindPathBetween(Coordinate start, Coordinate finish, DateTime startTime, SailingBoat boat)
     {
         double estimatedTimeFromStartToFinish = _travellingTimeService.TimeToTravel(start, finish, startTime, boat);
@@ -54,6 +65,7 @@ public class PathfinderService
         while (openPositions.Count > 0)
         {
             BoatPosition current = openPositions.MinBy(neighbour => neighbour.TimeFromStartToFinish)!;
+            Info(start, finish, current.Coordinate, openPositions);
 
             if (current.Coordinate.Equals(finish))
             {

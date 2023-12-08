@@ -1,9 +1,31 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Text.Json;
+using Geolocation;
 using SailingBoatPathfinder.Data.Models;
 using SailingBoatPathfinder.Data.Services;
+using SailingBoatPathfinder.Logic.Models;
 using SailingBoatPathfinder.Logic.Services;
+
+
+
+var boatLoader = new BoatLoaderService();
+var pathFinder = new PathfinderService(new CoordinateProviderService(),
+    new TravellingTimeService(new WindProviderService(), new PolarDiagramService()));
+var boats = boatLoader.ReadFromFileAsync(CancellationToken.None).Result.ToList();
+var boat = boats.First();
+
+var coordinates = new List<Coordinate>()
+{
+    new Coordinate(47.0073, 18.0265),
+    new Coordinate(47.0083, 18.0465),
+};
+var path = pathFinder.FindPath(coordinates, boat, DateTime.Now);
+foreach (BoatPosition boatPosition in path)
+{
+        Console.WriteLine($"{boatPosition.Coordinate.Latitude.ToString().Replace(',','.')}, {boatPosition.Coordinate.Longitude.ToString().Replace(',','.')}");
+}
+
 
 
 // var boatLoader = new BoatLoaderService();
@@ -18,12 +40,12 @@ using SailingBoatPathfinder.Logic.Services;
 var service = new PolarDiagramService();
 // var result = service.IsUnderBeatAngleOrOverGybeAngle(150, 150, 160, 165, 6, 8,162.5, 7);
 
-var topLeft = new SailingBoatPolarData() { WindVelocity = 10, WindAngle = 20, BoatVelocity = 16 };
-var topRight = new SailingBoatPolarData() { WindVelocity = 20, WindAngle = 20, BoatVelocity = 14 };
-var bottomLeft = new SailingBoatPolarData() { WindVelocity = 10, WindAngle = 10, BoatVelocity = 10 };
-var bottomRight = new SailingBoatPolarData() { WindVelocity = 20, WindAngle = 10, BoatVelocity = 12 };
-var result = service.NearestNeighbourInterpolation(topLeft, topRight, bottomRight, bottomLeft, 12.5, 12.5);
-Console.WriteLine(result);
+// var topLeft = new SailingBoatPolarData() { WindVelocity = 10, WindAngle = 20, BoatVelocity = 16 };
+// var topRight = new SailingBoatPolarData() { WindVelocity = 20, WindAngle = 20, BoatVelocity = 14 };
+// var bottomLeft = new SailingBoatPolarData() { WindVelocity = 10, WindAngle = 10, BoatVelocity = 10 };
+// var bottomRight = new SailingBoatPolarData() { WindVelocity = 20, WindAngle = 10, BoatVelocity = 12 };
+// var result = service.NearestNeighbourInterpolation(topLeft, topRight, bottomRight, bottomLeft, 12.5, 12.5);
+// Console.WriteLine(result);
 
 
 

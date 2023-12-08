@@ -23,10 +23,10 @@ public class TravellingTimeService
         
         double relativeWindAngle = 180 - Math.Abs(180 - Math.Abs(bearing - wind.AngleFrom));
         
-        double boatSpeed = _polarDiagramService.GetBoatSpeed(relativeWindAngle, wind.Velocity, boat);
+        double boatSpeedMps = _polarDiagramService.GetBoatSpeed(relativeWindAngle, wind.Velocity, boat);
         
         double distance = GeoCalculator.GetDistance(from, to, 4, DistanceUnit.Meters);
         
-        return boatSpeed / distance + wind.Delay;
+        return boatSpeedMps / distance + wind.Delay;
     }
 }

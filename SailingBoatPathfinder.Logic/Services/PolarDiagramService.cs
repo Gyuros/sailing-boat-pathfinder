@@ -30,7 +30,7 @@ public class PolarDiagramService
             bottomRight.DataType == PolarDataType.Inner
         )
         {
-            return BilinearInterpolation(topLeft, topRight, bottomRight, bottomLeft, windSpeed, windAngle);
+            return BilinearInterpolation(topLeft, topRight, bottomRight, bottomLeft, windSpeed, windAngle) * 0.51;
         }
 
         if (IsUnderBeatAngleOrOverGybeAngle(topLeft, topRight, bottomRight, bottomLeft, windSpeed, windAngle))
@@ -38,7 +38,7 @@ public class PolarDiagramService
             return 0;
         }
 
-        return NearestNeighbourInterpolation(topLeft, topRight, bottomRight, bottomLeft, windSpeed, windAngle);
+        return NearestNeighbourInterpolation(topLeft, topRight, bottomRight, bottomLeft, windSpeed, windAngle) * 0.51;
     }
 
     public bool IsUnderBeatAngleOrOverGybeAngle(

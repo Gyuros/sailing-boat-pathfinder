@@ -8,6 +8,6 @@ public class WindProviderService
 {
     public WindData GetWindData(Coordinate at, DateTime when)
     {
-        throw new NotImplementedException();
+        return new WindData(6, 0);
     }
 }
