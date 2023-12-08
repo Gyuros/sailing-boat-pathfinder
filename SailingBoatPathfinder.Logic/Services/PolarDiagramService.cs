@@ -30,21 +30,18 @@ public class PolarDiagramService
             bottomRight.DataType == PolarDataType.Inner
         )
         {
-            // sima bilin.
+            return BilinearInterpolation(topLeft, topRight, bottomRight, bottomLeft, windSpeed, windAngle);
         }
 
-        if (IsUnderBeatAngle(topLeft, topRight, bottomRight, bottomLeft, windSpeed, windAngle))
+        if (IsUnderBeatAngleOrOverGybeAngle(topLeft, topRight, bottomRight, bottomLeft, windSpeed, windAngle))
         {
             return 0;
         }
-        
-        // legközelebbi interpoláció
-        ...
 
-        throw new NotImplementedException();
+        return NearestNeighbourInterpolation(topLeft, topRight, bottomRight, bottomLeft, windSpeed, windAngle);
     }
 
-    public bool IsUnderBeatAngle(
+    public bool IsUnderBeatAngleOrOverGybeAngle(
         SailingBoatPolarData topLeft,
         SailingBoatPolarData topRight,
         SailingBoatPolarData bottomRight,
@@ -61,9 +58,9 @@ public class PolarDiagramService
             new Point(bottomRight.WindVelocity, bottomRight.WindAngle),
             new Point(bottomLeft.WindVelocity, bottomLeft.WindAngle)
         };
-        
-        var coef = poly.Skip(1).Select((p, i) => 
-                (point.Y - poly[i].Y)*(p.X - poly[i].X) 
+
+        var coef = poly.Skip(1).Select((p, i) =>
+                (point.Y - poly[i].Y) * (p.X - poly[i].X)
                 - (point.X - poly[i].X) * (p.Y - poly[i].Y))
             .ToList();
 
@@ -75,6 +72,72 @@ public class PolarDiagramService
             if (coef[i] * coef[i - 1] < 0)
                 return false;
         }
+
         return true;
+    }
+
+    public double NearestNeighbourInterpolation(
+        SailingBoatPolarData topLeft,
+        SailingBoatPolarData topRight,
+        SailingBoatPolarData bottomRight,
+        SailingBoatPolarData bottomLeft,
+        double windSpeed,
+        double windAngle
+    )
+    {
+        double leftWindSpeedDiff = Math.Abs(topLeft.WindVelocity - windSpeed);
+        double rightWindSpeedDiff = Math.Abs(topRight.WindVelocity - windSpeed);
+
+        if (leftWindSpeedDiff < rightWindSpeedDiff)
+        {
+            double topWindAngleDiff = Math.Abs(topLeft.WindAngle - windAngle);
+            double bottomWindAngleDiff = Math.Abs(bottomLeft.WindAngle - windAngle);
+
+            if (topWindAngleDiff < bottomWindAngleDiff)
+            {
+                return topLeft.BoatVelocity;
+            }
+            else
+            {
+                return bottomLeft.BoatVelocity;
+            }
+        }
+        else
+        {
+            double topWindAngleDiff = Math.Abs(topRight.WindAngle - windAngle);
+            double bottomWindAngleDiff = Math.Abs(bottomRight.WindAngle - windAngle);
+
+            if (topWindAngleDiff < bottomWindAngleDiff)
+            {
+                return topRight.BoatVelocity;
+            }
+            else
+            {
+                return bottomRight.BoatVelocity;
+            }
+        }
+    }
+
+    public double BilinearInterpolation(
+        SailingBoatPolarData topLeft,
+        SailingBoatPolarData topRight,
+        SailingBoatPolarData bottomRight,
+        SailingBoatPolarData bottomLeft,
+        double windSpeed,
+        double windAngle
+    )
+    {
+        double x = Math.Abs((windSpeed - topLeft.WindVelocity) / (topRight.WindVelocity - topLeft.WindVelocity));
+        double y = Math.Abs((windAngle - bottomLeft.WindAngle) / (bottomLeft.WindAngle - topLeft.WindAngle));
+
+        double wTopLeft = (1 - x) * y;
+        double wTopRight = x * y;
+        double wBottomRight = x * (1 - y);
+        double wBottomLeft = (1 - x) * (1 - y);
+
+        return topLeft.BoatVelocity * wTopLeft +
+               topRight.BoatVelocity * wTopRight +
+               bottomRight.BoatVelocity * wBottomRight +
+               bottomLeft.BoatVelocity * wBottomLeft;
     }
 }
