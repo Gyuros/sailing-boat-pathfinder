@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net7.0-windows</TargetFramework>
+        <Nullable>enable</Nullable>
+        <UseWPF>true</UseWPF>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Geolocation" Version="1.2.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SailingBoatPathfinder.Data\SailingBoatPathfinder.Data.csproj" />
+      <ProjectReference Include="..\SailingBoatPathfinder.Logic\SailingBoatPathfinder.Logic.csproj" />
+    </ItemGroup>
+
+</Project>

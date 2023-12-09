@@ -9,4 +9,9 @@ public class SailingBoatPolarData
     public double BoatVelocity { get; set; }
 
     public PolarDataType DataType { get; set; }
+
+    public override string ToString()
+    {
+        return $"{WindAngle} - {WindVelocity}";
+    }
 }

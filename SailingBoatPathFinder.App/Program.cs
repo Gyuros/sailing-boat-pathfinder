@@ -7,24 +7,56 @@ using SailingBoatPathfinder.Data.Services;
 using SailingBoatPathfinder.Logic.Models;
 using SailingBoatPathfinder.Logic.Services;
 
-
-
-var boatLoader = new BoatLoaderService();
-var pathFinder = new PathfinderService(new CoordinateProviderService(),
-    new TravellingTimeService(new WindProviderService(), new PolarDiagramService()));
-var boats = boatLoader.ReadFromFileAsync(CancellationToken.None).Result.ToList();
-var boat = boats.First();
-
-var coordinates = new List<Coordinate>()
+var poly = new List<Point>()
 {
-    new Coordinate(47.0073, 18.0265),
-    new Coordinate(47.0083, 18.0465),
+    new Point(3, 0),
+    new Point(3, 0),
+    new Point(3, 3),
+    new Point(3, 3),
 };
-var path = pathFinder.FindPath(coordinates, boat, DateTime.Now);
-foreach (BoatPosition boatPosition in path)
+var point = new Point(0, 5);
+
+static bool Inside(List<Point> poly, Point point)
 {
-        Console.WriteLine($"{boatPosition.Coordinate.Latitude.ToString().Replace(',','.')}, {boatPosition.Coordinate.Longitude.ToString().Replace(',','.')}");
+    var coef = poly.Skip(1).Select((p, i) =>
+            (point.Y - poly[i].Y) * (p.X - poly[i].X)
+            - (point.X - poly[i].X) * (p.Y - poly[i].Y))
+        .ToList();
+
+    if (coef.Any(p => p == 0))
+        return true;
+
+    for (int i = 1; i < coef.Count(); i++)
+    {
+        if (coef[i] * coef[i - 1] < 0)
+            return false;
+    }
+
+    return true;
 }
+
+Console.WriteLine(Inside(poly, point));
+
+// var boatLoader = new BoatLoaderService();
+// var pathFinder = new PathfinderService(new CoordinateProviderService(),
+//     new TravellingTimeService(new WindProviderService(), new PolarDiagramService()));
+// var boats = boatLoader.ReadFromFileAsync(CancellationToken.None).Result.ToList();
+// var boat = boats.First();
+//
+// var coordinates = new List<Coordinate>()
+// {
+//     new Coordinate(47.0073, 18.0265),
+//     new Coordinate(47.0083, 18.0465),
+// };
+// var path = pathFinder.FindPath(coordinates, boat, DateTime.Now);
+//
+// foreach (BoatPosition boatPosition in path)
+// {
+//         Console.WriteLine($"{boatPosition.Coordinate.Latitude.ToString().Replace(',','.')}, {boatPosition.Coordinate.Longitude.ToString().Replace(',','.')}");
+// }
+
+// var last = path.Last();
+// ;
 
 
 

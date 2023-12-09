@@ -26,7 +26,12 @@ public class TravellingTimeService
         double boatSpeedMps = _polarDiagramService.GetBoatSpeed(relativeWindAngle, wind.Velocity, boat);
         
         double distance = GeoCalculator.GetDistance(from, to, 4, DistanceUnit.Meters);
+
+        if (boatSpeedMps == 0)
+        {
+            return double.PositiveInfinity;
+        }
         
-        return boatSpeedMps / distance + wind.Delay;
+        return distance / boatSpeedMps + wind.Delay;
     }
 }

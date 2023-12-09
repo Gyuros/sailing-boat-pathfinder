@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SailingBoatPathfinder.App",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SailingBoatPathfinder.Logic", "SailingBoatPathfinder.Logic\SailingBoatPathfinder.Logic.csproj", "{3745223F-4B6F-4E4C-8DF6-7C9D5C4DDC79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SailingBoatPathfinder.UI", "SailingBoatPathfinder.UI\SailingBoatPathfinder.UI.csproj", "{5772B0DF-37BD-4985-A40B-574D220DF70B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{3745223F-4B6F-4E4C-8DF6-7C9D5C4DDC79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3745223F-4B6F-4E4C-8DF6-7C9D5C4DDC79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3745223F-4B6F-4E4C-8DF6-7C9D5C4DDC79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5772B0DF-37BD-4985-A40B-574D220DF70B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5772B0DF-37BD-4985-A40B-574D220DF70B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5772B0DF-37BD-4985-A40B-574D220DF70B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5772B0DF-37BD-4985-A40B-574D220DF70B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

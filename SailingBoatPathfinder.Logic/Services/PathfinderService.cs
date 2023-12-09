@@ -20,7 +20,7 @@ public class PathfinderService
         _travellingTimeService = travellingTimeService;
     }
 
-    public List<BoatPosition> FindPath(List<Coordinate> checkpoints, SailingBoat boat, DateTime startTime)
+    public List<BoatPosition> FindPath(List<Coordinate> checkpoints, SailingBoat boat, DateTime startTime, Action<Coordinate, bool> action)
     {
         checkpoints.ForEach(coordinate => _coordinateProviderService.RoundCoordinate(coordinate));
         Coordinate current = checkpoints.First();
@@ -29,7 +29,7 @@ public class PathfinderService
 
         foreach (Coordinate next in checkpoints.Skip(1))
         {
-            List<BoatPosition> partialPath = FindPathBetween(current, next, startTime, boat);
+            List<BoatPosition> partialPath = FindPathBetween(current, next, startTime, boat, action);
             
             BoatPosition partialFirst = partialPath.FirstOrDefault()!;
             partialFirst.From = partialLast;
@@ -53,7 +53,7 @@ public class PathfinderService
         }
     }
 
-    private List<BoatPosition> FindPathBetween(Coordinate start, Coordinate finish, DateTime startTime, SailingBoat boat)
+    private List<BoatPosition> FindPathBetween(Coordinate start, Coordinate finish, DateTime startTime, SailingBoat boat, Action<Coordinate, bool> action)
     {
         double estimatedTimeFromStartToFinish = _travellingTimeService.TimeToTravel(start, finish, startTime, boat);
         BoatPosition startPosition = new BoatPosition(null, 0, estimatedTimeFromStartToFinish, start);
@@ -65,9 +65,9 @@ public class PathfinderService
         while (openPositions.Count > 0)
         {
             BoatPosition current = openPositions.MinBy(neighbour => neighbour.TimeFromStartToFinish)!;
-            Info(start, finish, current.Coordinate, openPositions);
+            action(current.Coordinate, false);
 
-            if (current.Coordinate.Equals(finish))
+            if (GeoCalculator.GetDistance(current.Coordinate, finish, 0, DistanceUnit.Meters) < 10)
             {
                 return ConstructPath(current);
             }
@@ -82,7 +82,7 @@ public class PathfinderService
                     )
                 )
                 .ToList();
-
+            
             foreach (BoatPosition currentNeighbour in currentNeighbours)
             {
                 DateTime timeOfTravelFromCurrent = startTime.Add(TimeSpan.FromMicroseconds(current.TimeFromStart));
@@ -93,12 +93,16 @@ public class PathfinderService
                 {
                     continue;
                 }
-
+                else
+                {
+                    ;
+                }
+                
                 currentNeighbour.From = current;
                 currentNeighbour.TimeFromStart = timeFromStartToNeighbour;
                 DateTime timeOfTravelFromCurrentNeighbour = timeOfTravelFromCurrent.Add(TimeSpan.FromMicroseconds(timeToTravel));
-                currentNeighbour.EstimatedTimeToFinish = _travellingTimeService.TimeToTravel(start, finish, timeOfTravelFromCurrentNeighbour, boat);
-
+                currentNeighbour.EstimatedTimeToFinish = _travellingTimeService.TimeToTravel(currentNeighbour.Coordinate, finish, timeOfTravelFromCurrentNeighbour, boat);
+                
                 if (!openPositions.Contains(currentNeighbour))
                 {
                     openPositions.Add(currentNeighbour);

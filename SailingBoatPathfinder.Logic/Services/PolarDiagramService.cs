@@ -7,13 +7,19 @@ public class PolarDiagramService
 {
     public double GetBoatSpeed(double windAngle, double windSpeed, SailingBoat boat)
     {
-        List<SailingBoatPolarData> left = boat.PolarData.Where(data => data.WindVelocity <= windSpeed).ToList();
-        List<SailingBoatPolarData> right = boat.PolarData.Where(data => data.WindVelocity >= windSpeed).ToList();
+        List<IGrouping<double, SailingBoatPolarData>> groupedByWindSpeed = boat.PolarData.GroupBy(data => data.WindVelocity).ToList();
+        List<IGrouping<double, SailingBoatPolarData>> left = groupedByWindSpeed.Where(group => group.Key <= windSpeed).ToList();
+        List<IGrouping<double, SailingBoatPolarData>> right = groupedByWindSpeed.Where(group => group.Key >= windSpeed).ToList();
 
-        SailingBoatPolarData? topLeft = left.LastOrDefault(data => data.WindAngle <= windAngle);
-        SailingBoatPolarData? bottomLeft = left.FirstOrDefault(data => data.WindAngle >= windAngle);
-        SailingBoatPolarData? topRight = right.LastOrDefault(data => data.WindAngle <= windAngle);
-        SailingBoatPolarData? bottomRight = right.FirstOrDefault(data => data.WindAngle >= windAngle);
+        SailingBoatPolarData? topLeft = left.LastOrDefault()?.LastOrDefault(data => data.WindAngle <= windAngle);
+        SailingBoatPolarData? bottomLeft = left.LastOrDefault()?.FirstOrDefault(data => data.WindAngle >= windAngle);
+        SailingBoatPolarData? topRight = right.FirstOrDefault()?.LastOrDefault(data => data.WindAngle <= windAngle);
+        SailingBoatPolarData? bottomRight = right.FirstOrDefault()?.FirstOrDefault(data => data.WindAngle >= windAngle);
+
+        // if (windAngle < 46 && windAngle > 45)
+        // {
+        //     ;
+        // }
 
         if (topLeft == null || bottomLeft == null)
         {
@@ -33,7 +39,7 @@ public class PolarDiagramService
             return BilinearInterpolation(topLeft, topRight, bottomRight, bottomLeft, windSpeed, windAngle) * 0.51;
         }
 
-        if (IsUnderBeatAngleOrOverGybeAngle(topLeft, topRight, bottomRight, bottomLeft, windSpeed, windAngle))
+        if (!IsInsideLimits(topLeft, topRight, bottomRight, bottomLeft, windSpeed, windAngle))
         {
             return 0;
         }
@@ -41,7 +47,7 @@ public class PolarDiagramService
         return NearestNeighbourInterpolation(topLeft, topRight, bottomRight, bottomLeft, windSpeed, windAngle) * 0.51;
     }
 
-    public bool IsUnderBeatAngleOrOverGybeAngle(
+    public bool IsInsideLimits(
         SailingBoatPolarData topLeft,
         SailingBoatPolarData topRight,
         SailingBoatPolarData bottomRight,
@@ -50,6 +56,11 @@ public class PolarDiagramService
         double windAngle
     )
     {
+        if (topLeft == topRight && bottomLeft == bottomRight)
+        {
+            return windAngle >= topLeft.WindAngle && windAngle <= bottomLeft.WindAngle;
+        }
+        
         var point = new Point(windSpeed, windAngle);
         var poly = new[]
         {
@@ -85,31 +96,31 @@ public class PolarDiagramService
         double windAngle
     )
     {
-        double leftWindSpeedDiff = Math.Abs(topLeft.WindVelocity - windSpeed);
-        double rightWindSpeedDiff = Math.Abs(topRight.WindVelocity - windSpeed);
+        double topWindAngleDiff = Math.Abs(topLeft.WindAngle - windAngle);
+        double bottomWindAngleDiff = Math.Abs(bottomLeft.WindAngle - windAngle);
 
-        if (leftWindSpeedDiff < rightWindSpeedDiff)
+        if (topWindAngleDiff < bottomWindAngleDiff)
         {
-            double topWindAngleDiff = Math.Abs(topLeft.WindAngle - windAngle);
-            double bottomWindAngleDiff = Math.Abs(bottomLeft.WindAngle - windAngle);
-
-            if (topWindAngleDiff < bottomWindAngleDiff)
+            double leftWindSpeedDiff = Math.Abs(topLeft.WindVelocity - windSpeed);
+            double rightWindSpeedDiff = Math.Abs(topRight.WindVelocity - windSpeed);
+            
+            if (leftWindSpeedDiff < rightWindSpeedDiff)
             {
                 return topLeft.BoatVelocity;
             }
             else
             {
-                return bottomLeft.BoatVelocity;
+                return topRight.BoatVelocity;
             }
         }
         else
         {
-            double topWindAngleDiff = Math.Abs(topRight.WindAngle - windAngle);
-            double bottomWindAngleDiff = Math.Abs(bottomRight.WindAngle - windAngle);
-
-            if (topWindAngleDiff < bottomWindAngleDiff)
+            double leftWindSpeedDiff = Math.Abs(bottomLeft.WindVelocity - windSpeed);
+            double rightWindSpeedDiff = Math.Abs(bottomRight.WindVelocity - windSpeed);
+            
+            if (leftWindSpeedDiff < rightWindSpeedDiff)
             {
-                return topRight.BoatVelocity;
+                return bottomLeft.BoatVelocity;
             }
             else
             {
@@ -127,8 +138,18 @@ public class PolarDiagramService
         double windAngle
     )
     {
-        double x = Math.Abs((windSpeed - topLeft.WindVelocity) / (topRight.WindVelocity - topLeft.WindVelocity));
-        double y = Math.Abs((windAngle - bottomLeft.WindAngle) / (bottomLeft.WindAngle - topLeft.WindAngle));
+        
+        double x = 0;
+        if (topRight != topLeft)
+        {
+            x = Math.Abs((windSpeed - topLeft.WindVelocity) / (topRight.WindVelocity - topLeft.WindVelocity));
+        }
+
+        double y = 0;
+        if (bottomLeft != topLeft)
+        {
+            y = Math.Abs((windAngle - bottomLeft.WindAngle) / (bottomLeft.WindAngle - topLeft.WindAngle));
+        }
 
         double wTopLeft = (1 - x) * y;
         double wTopRight = x * y;
