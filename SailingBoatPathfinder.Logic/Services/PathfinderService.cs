@@ -67,7 +67,7 @@ public class PathfinderService
             BoatPosition current = openPositions.MinBy(neighbour => neighbour.TimeFromStartToFinish)!;
             action(current.Coordinate, false);
 
-            if (GeoCalculator.GetDistance(current.Coordinate, finish, 0, DistanceUnit.Meters) < 10)
+            if (GeoCalculator.GetDistance(current.Coordinate, finish, 0, DistanceUnit.Meters) < 50)
             {
                 return ConstructPath(current);
             }

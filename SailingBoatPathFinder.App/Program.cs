@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using System.Globalization;
 using System.Text.Json;
 using Geolocation;
 using SailingBoatPathfinder.Data.Models;
@@ -7,56 +8,44 @@ using SailingBoatPathfinder.Data.Services;
 using SailingBoatPathfinder.Logic.Models;
 using SailingBoatPathfinder.Logic.Services;
 
-var poly = new List<Point>()
+
+var boatLoader = new BoatLoaderService();
+var pathFinder = new PathfinderService(new CoordinateProviderService(),
+    new TravellingTimeService(new WindProviderService(), new PolarDiagramService()));
+var boats = boatLoader.ReadFromFileAsync(CancellationToken.None).Result.ToList();
+var boat = boats.First();
+
+var coordinates = new List<Coordinate>()
 {
-    new Point(3, 0),
-    new Point(3, 0),
-    new Point(3, 3),
-    new Point(3, 3),
+    // Balaton hosszú
+    // new Coordinate(46.987013, 18.121831),
+    // new Coordinate(46.716171, 17.263623),
+    
+    // Balaton rövid
+    // new Coordinate(47.0073, 18.0265),
+    // new Coordinate(47.0083, 18.0465),
+    
+    // Európa -> USA
+    new Coordinate(46.931452, 17.869763),
+    new Coordinate(46.952079, 18.133435),
+    
 };
-var point = new Point(0, 5);
+var watch = System.Diagnostics.Stopwatch.StartNew();
+var path = pathFinder.FindPath(coordinates, boat, DateTime.Now, (x, y) => {});
+watch.Stop();
+var elapsedMs = watch.ElapsedMilliseconds;
+Console.WriteLine(elapsedMs);
 
-static bool Inside(List<Point> poly, Point point)
-{
-    var coef = poly.Skip(1).Select((p, i) =>
-            (point.Y - poly[i].Y) * (p.X - poly[i].X)
-            - (point.X - poly[i].X) * (p.Y - poly[i].Y))
-        .ToList();
+string output = string.Join(Environment.NewLine, path.Select(x => $"{x.Coordinate.Latitude.ToString(CultureInfo.GetCultureInfo("en-NZ"))}, {x.Coordinate.Longitude.ToString(CultureInfo.GetCultureInfo("en-NZ"))}"));
+File.WriteAllText("output.txt", $"{elapsedMs}{Environment.NewLine}{output}");
 
-    if (coef.Any(p => p == 0))
-        return true;
-
-    for (int i = 1; i < coef.Count(); i++)
-    {
-        if (coef[i] * coef[i - 1] < 0)
-            return false;
-    }
-
-    return true;
-}
-
-Console.WriteLine(Inside(poly, point));
-
-// var boatLoader = new BoatLoaderService();
-// var pathFinder = new PathfinderService(new CoordinateProviderService(),
-//     new TravellingTimeService(new WindProviderService(), new PolarDiagramService()));
-// var boats = boatLoader.ReadFromFileAsync(CancellationToken.None).Result.ToList();
-// var boat = boats.First();
-//
-// var coordinates = new List<Coordinate>()
-// {
-//     new Coordinate(47.0073, 18.0265),
-//     new Coordinate(47.0083, 18.0465),
-// };
-// var path = pathFinder.FindPath(coordinates, boat, DateTime.Now);
-//
 // foreach (BoatPosition boatPosition in path)
 // {
 //         Console.WriteLine($"{boatPosition.Coordinate.Latitude.ToString().Replace(',','.')}, {boatPosition.Coordinate.Longitude.ToString().Replace(',','.')}");
 // }
-
+//
 // var last = path.Last();
-// ;
+;
 
 
 

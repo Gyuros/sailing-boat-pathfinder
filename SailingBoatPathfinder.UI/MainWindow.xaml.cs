@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -30,8 +31,8 @@ namespace SailingBoatPathfinder.UI
         {
             InitializeComponent();
 
-            topLeft = new Coordinate(47.029757, 18.002024);
-            bottomRight = new Coordinate(46.99, 18.072447);
+            topLeft = new Coordinate(47.053886, 17.193261);
+            bottomRight = new Coordinate(46.711333, 18.177147);
             maxLat = topLeft.Latitude - bottomRight.Latitude;
             maxLon = bottomRight.Longitude - topLeft.Longitude;
         }
@@ -40,10 +41,13 @@ namespace SailingBoatPathfinder.UI
         {
             Task.Run(() =>
             {
-                DrawCoordinate(new Coordinate(47.0073, 18.0265), true);
-                DrawCoordinate(new Coordinate(47.0083, 18.0465), true);
                 var path = Plan(new Coordinate(47.0073, 18.0265), new Coordinate(47.0083, 18.0465));
-                path.ForEach(position => DrawCoordinate(position.Coordinate, true)); 
+                path.ForEach(position =>
+                {
+                    Console.WriteLine($"{position.Coordinate.Latitude.ToString(CultureInfo.GetCultureInfo("en-NZ"))}, {position.Coordinate.Longitude.ToString(CultureInfo.GetCultureInfo("en-NZ"))}");
+                    DrawCoordinate(position.Coordinate, true);
+                }); 
+                Console.WriteLine(path.Last().TimeFromStart);
             });
         }
 
@@ -57,9 +61,13 @@ namespace SailingBoatPathfinder.UI
 
             var coordinates = new List<Coordinate>()
             {
-                new Coordinate(47.0073, 18.0265),
-                new Coordinate(47.0083, 18.0465),
+                // new Coordinate(47.0073, 18.0265),
+                // new Coordinate(47.0083, 18.0465),
+                
+                new Coordinate(46.931452, 17.869763),
+                new Coordinate(46.952079, 18.133435),
             };
+            coordinates.ForEach(x => DrawCoordinate(x, true));
             return pathFinder.FindPath(coordinates, boat, DateTime.Now, DrawCoordinate);
         }
 

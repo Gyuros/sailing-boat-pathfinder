@@ -8,6 +8,6 @@ public class WindProviderService
 {
     public WindData GetWindData(Coordinate at, DateTime when)
     {
-        return new WindData(6, 0);
+        return new WindData(20, 135);
     }
 }
