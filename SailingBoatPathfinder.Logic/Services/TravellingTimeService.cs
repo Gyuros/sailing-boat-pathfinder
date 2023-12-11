@@ -17,7 +17,7 @@ public class TravellingTimeService
 
     public double TimeToTravel(Coordinate from, Coordinate to, DateTime timeOfTravel, SailingBoat boat)
     {
-        WindData wind = _windProviderService.GetWindData(from, timeOfTravel);
+        WindDto wind = _windProviderService.GetWindData(from, timeOfTravel);
         
         double bearing = GeoCalculator.GetBearing(from, to);
         

@@ -1,0 +1,16 @@
+{
+  "boatType": "J-125",
+  "boatsFileName": "sailing-boats.json",
+  "windMapFileName": "wind-map.json",
+  "dateTime": "2024-01-01T00:01:00",
+  "coordinates": [
+    { 
+      "latitude": 47.0073,
+      "longitude": 18.0265
+    },
+    { 
+      "latitude": 47.0083,
+      "longitude": 18.0465
+    }
+  ]
+}

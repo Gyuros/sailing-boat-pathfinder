@@ -85,7 +85,7 @@ public class PathfinderService
             
             foreach (BoatPosition currentNeighbour in currentNeighbours)
             {
-                DateTime timeOfTravelFromCurrent = startTime.Add(TimeSpan.FromMicroseconds(current.TimeFromStart));
+                DateTime timeOfTravelFromCurrent = startTime.Add(TimeSpan.FromSeconds(current.TimeFromStart));
                 double timeToTravel = _travellingTimeService.TimeToTravel(current.Coordinate, currentNeighbour.Coordinate, timeOfTravelFromCurrent, boat);
                 double timeFromStartToNeighbour = current.TimeFromStart + timeToTravel;
 
@@ -100,7 +100,7 @@ public class PathfinderService
                 
                 currentNeighbour.From = current;
                 currentNeighbour.TimeFromStart = timeFromStartToNeighbour;
-                DateTime timeOfTravelFromCurrentNeighbour = timeOfTravelFromCurrent.Add(TimeSpan.FromMicroseconds(timeToTravel));
+                DateTime timeOfTravelFromCurrentNeighbour = timeOfTravelFromCurrent.Add(TimeSpan.FromSeconds(timeToTravel));
                 currentNeighbour.EstimatedTimeToFinish = _travellingTimeService.TimeToTravel(currentNeighbour.Coordinate, finish, timeOfTravelFromCurrentNeighbour, boat);
                 
                 if (!openPositions.Contains(currentNeighbour))

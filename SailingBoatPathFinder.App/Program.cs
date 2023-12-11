@@ -8,36 +8,45 @@ using SailingBoatPathfinder.Data.Services;
 using SailingBoatPathfinder.Logic.Models;
 using SailingBoatPathfinder.Logic.Services;
 
+var a = DateTime.Parse("2024.01.01 00:02:00");
+var b = DateTime.Parse("2024.01.01 00:03:00");
+var c = a > b;
 
-var boatLoader = new BoatLoaderService();
-var pathFinder = new PathfinderService(new CoordinateProviderService(),
-    new TravellingTimeService(new WindProviderService(), new PolarDiagramService()));
-var boats = boatLoader.ReadFromFileAsync(CancellationToken.None).Result.ToList();
-var boat = boats.First();
+var loaderService = new LoaderService();
+var runConfigurationService = new RunConfigurationService(loaderService);
+var runConfiguration = runConfigurationService.GetRunConfigurationAsync(CancellationToken.None).Result;
 
-var coordinates = new List<Coordinate>()
-{
-    // Balaton hosszú
-    // new Coordinate(46.987013, 18.121831),
-    // new Coordinate(46.716171, 17.263623),
-    
-    // Balaton rövid
-    // new Coordinate(47.0073, 18.0265),
-    // new Coordinate(47.0083, 18.0465),
-    
-    // Európa -> USA
-    new Coordinate(46.931452, 17.869763),
-    new Coordinate(46.952079, 18.133435),
-    
-};
-var watch = System.Diagnostics.Stopwatch.StartNew();
-var path = pathFinder.FindPath(coordinates, boat, DateTime.Now, (x, y) => {});
-watch.Stop();
-var elapsedMs = watch.ElapsedMilliseconds;
-Console.WriteLine(elapsedMs);
 
-string output = string.Join(Environment.NewLine, path.Select(x => $"{x.Coordinate.Latitude.ToString(CultureInfo.GetCultureInfo("en-NZ"))}, {x.Coordinate.Longitude.ToString(CultureInfo.GetCultureInfo("en-NZ"))}"));
-File.WriteAllText("output.txt", $"{elapsedMs}{Environment.NewLine}{output}");
+// var loaderService = new LoaderService();
+// var runConfigurationService = new RunConfigurationService(loaderService);
+// var pathFinder = new PathfinderService(new CoordinateProviderService(),
+//     new TravellingTimeService(new WindProviderService(), new PolarDiagramService()));
+// var boats = loaderService.ReadFromFileAsync<List<SailingBoat>>("sailing-boats.json", CancellationToken.None).Result;
+// var boat = boats!.First();
+//
+// var coordinates = new List<Coordinate>()
+// {
+//     // Balaton hosszú
+//     // new Coordinate(46.987013, 18.121831),
+//     // new Coordinate(46.716171, 17.263623),
+//     
+//     // Balaton rövid
+//     // new Coordinate(47.0073, 18.0265),
+//     // new Coordinate(47.0083, 18.0465),
+//     
+//     // Európa -> USA
+//     new Coordinate(46.931452, 17.869763),
+//     new Coordinate(46.952079, 18.133435),
+//     
+// };
+// var watch = System.Diagnostics.Stopwatch.StartNew();
+// var path = pathFinder.FindPath(coordinates, boat, DateTime.Now, (x, y) => {});
+// watch.Stop();
+// var elapsedMs = watch.ElapsedMilliseconds;
+// Console.WriteLine(elapsedMs);
+//
+// string output = string.Join(Environment.NewLine, path.Select(x => $"{x.Coordinate.Latitude.ToString(CultureInfo.GetCultureInfo("en-NZ"))}, {x.Coordinate.Longitude.ToString(CultureInfo.GetCultureInfo("en-NZ"))}"));
+// File.WriteAllText("output.txt", $"{elapsedMs}{Environment.NewLine}{output}");
 
 // foreach (BoatPosition boatPosition in path)
 // {

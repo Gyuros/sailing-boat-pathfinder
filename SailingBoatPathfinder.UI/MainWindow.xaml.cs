@@ -31,8 +31,8 @@ namespace SailingBoatPathfinder.UI
         {
             InitializeComponent();
 
-            topLeft = new Coordinate(47.053886, 17.193261);
-            bottomRight = new Coordinate(46.711333, 18.177147);
+            topLeft = new Coordinate(47.024696, 18.009016);
+            bottomRight = new Coordinate(46.996722, 18.067896);
             maxLat = topLeft.Latitude - bottomRight.Latitude;
             maxLon = bottomRight.Longitude - topLeft.Longitude;
         }
@@ -41,7 +41,7 @@ namespace SailingBoatPathfinder.UI
         {
             Task.Run(() =>
             {
-                var path = Plan(new Coordinate(47.0073, 18.0265), new Coordinate(47.0083, 18.0465));
+                var path = Plan();
                 path.ForEach(position =>
                 {
                     Console.WriteLine($"{position.Coordinate.Latitude.ToString(CultureInfo.GetCultureInfo("en-NZ"))}, {position.Coordinate.Longitude.ToString(CultureInfo.GetCultureInfo("en-NZ"))}");
@@ -51,24 +51,17 @@ namespace SailingBoatPathfinder.UI
             });
         }
 
-        private List<BoatPosition> Plan(Coordinate from, Coordinate to)
+        private List<BoatPosition> Plan()
         {
-            var boatLoader = new BoatLoaderService();
+            var loaderService = new LoaderService();
+            var runConfigurationService = new RunConfigurationService(loaderService);
+            var runConfiguration = runConfigurationService.GetRunConfigurationAsync(CancellationToken.None).Result;
+            
             var pathFinder = new PathfinderService(new CoordinateProviderService(),
-                new TravellingTimeService(new WindProviderService(), new PolarDiagramService()));
-            var boats = boatLoader.ReadFromFileAsync(CancellationToken.None).Result.ToList();
-            var boat = boats.First();
-
-            var coordinates = new List<Coordinate>()
-            {
-                // new Coordinate(47.0073, 18.0265),
-                // new Coordinate(47.0083, 18.0465),
-                
-                new Coordinate(46.931452, 17.869763),
-                new Coordinate(46.952079, 18.133435),
-            };
-            coordinates.ForEach(x => DrawCoordinate(x, true));
-            return pathFinder.FindPath(coordinates, boat, DateTime.Now, DrawCoordinate);
+                new TravellingTimeService(new WindProviderService(runConfiguration.WindMap), new PolarDiagramService()));
+            
+            runConfiguration.Coordinates.ForEach(x => DrawCoordinate(x, true));
+            return pathFinder.FindPath(runConfiguration.Coordinates, runConfiguration.Boat, runConfiguration.DateTime, DrawCoordinate);
         }
 
         private Coordinate topLeft;
