@@ -1,0 +1,17 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+BoatPosition <-- Coordinate
+
+class BoatPosition {
+Coordinate coordinate
+double elapsedTime
+double distanceTravelled
+}
+
+class Coordinate {
+double latitude
+double longitude
+}
+
+@enduml

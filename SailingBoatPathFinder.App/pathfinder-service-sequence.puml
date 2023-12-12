@@ -1,0 +1,42 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+skinparam BoxPadding 10
+skinparam participantPadding 10
+
+
+box "App"
+        participant Program
+endbox
+    box "Logic"
+    participant PathfinderService
+    participant CoordinateProviderService
+    participant TravellingTimeService
+endbox
+
+Program -> PathfinderService: start A*
+activate PathfinderService
+    PathfinderService -> PathfinderService: initializing
+
+    loop until finish is found
+        PathfinderService -> PathfinderService: selecting a coordinate from the open list
+        PathfinderService -> CoordinateProviderService: get neighbours
+        activate CoordinateProviderService
+            PathfinderService <-- CoordinateProviderService: List<Coordinate>
+        deactivate
+        loop iterating through neighbours
+            PathfinderService -> TravellingTimeService: calculate travelling time and heuristics
+            activate TravellingTimeService
+                PathfinderService <-- TravellingTimeService: seconds
+            deactivate
+            PathfinderService -> PathfinderService: comparing current coordinate and neighbour
+        end
+    end
+    
+    PathfinderService -> PathfinderService: constructing the path
+    Program <-- PathfinderService: List<BoatPosition>
+deactivate
+ 
+
+@enduml

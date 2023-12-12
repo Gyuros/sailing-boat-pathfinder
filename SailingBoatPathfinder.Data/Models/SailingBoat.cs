@@ -13,7 +13,7 @@ public class SailingBoat
         get
         {
             if (!_ordered)
-            {
+            {   
                 _polarData = _polarData.OrderBy(data => data.WindVelocity).ThenBy(data => data.WindAngle).ToList();
                 _ordered = true;
             }

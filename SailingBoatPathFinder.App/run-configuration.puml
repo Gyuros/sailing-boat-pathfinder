@@ -1,0 +1,19 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+RunConfiguration *-- Coordinate
+
+class RunConfiguration {
+string boatType
+string boatsFileName
+string windMapFileName
+List<Coordinate> Coordinates
+DateTime? dateTime
+}
+
+class Coordinate {
+double latitude
+double longitude
+}
+
+@enduml

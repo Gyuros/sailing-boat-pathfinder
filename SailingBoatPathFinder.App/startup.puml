@@ -1,0 +1,44 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+skinparam BoxPadding 10
+skinparam participantPadding 10
+
+box "App"
+participant Program
+participant RunConfigurationService
+endbox
+box "Logic"
+participant PathFinderService
+endbox
+box "Data"
+participant IOService
+endbox
+
+== Reading input ==
+Program -> RunConfigurationService
+RunConfigurationService -> IOService
+activate IOService
+IOService -> IOService: reading json
+RunConfigurationService <-- IOService: RunConfiguration
+deactivate
+Program <-- RunConfigurationService: RunConfiguration
+
+== Starting pathfinding ==
+Program -> PathFinderService: RunConfiguration
+activate PathFinderService
+PathFinderService -> PathFinderService: finding route
+Program <- PathFinderService: List<BoatPosition>
+deactivate
+
+== Writing output ==
+Program -> RunConfigurationService: List<BoatPosition>
+RunConfigurationService -> IOService: List<BoatPosition>
+activate IOService
+IOService -> IOService: writing json
+RunConfigurationService <-- IOService
+deactivate
+Program <-- RunConfigurationService: exit application
+ 
+@enduml

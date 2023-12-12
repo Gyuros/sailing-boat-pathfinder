@@ -1,0 +1,25 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+SailingBoat *-- SailingBoatPolarData
+SailingBoat <-- DataType
+
+class SailingBoat {
+string type
+List<SailingBoatPolarData> polarData
+}
+
+class SailingBoatPolarData {
+double windAngle
+double windVelocity
+double boatVelocity
+DataType dataType
+}
+
+enum DataType {
+Inner = 0
+Beat = 1
+Run = 2
+}
+
+@enduml

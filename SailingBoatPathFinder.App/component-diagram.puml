@@ -1,0 +1,22 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+
+package "App" {
+  [Program]
+  Program --> [RunConfigurationService]
+}
+
+package "Logic" {
+  Program --> [PathfinderService]
+  PathfinderService --> [CoordinateProviderService]
+  PathfinderService --> [TravellingTimeService]
+  TravellingTimeService --> [PolarDiagramService]
+  TravellingTimeService --> [WindProviderService]
+}
+
+package "Data" {
+  RunConfigurationService --> [IOServive]
+}
+
+@enduml
