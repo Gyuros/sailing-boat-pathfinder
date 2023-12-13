@@ -18,16 +18,6 @@ public class WindProviderService
     {
         List<WindData>? windData = _windMap.WindData?.Where(data => InsideArea(data.TopLeft, data.BottomRight, at)).ToList();
         WindData? currentWindData = windData?.FirstOrDefault(windData => (windData.From ?? DateTime.MinValue) <= when && (windData.To ?? DateTime.MaxValue) >= when);
-        
-        // if (currentWindData != null && currentWindData == windData?.LastOrDefault())
-        // {
-        //     ;
-        // }
-
-        if (when >= DateTime.Parse("2024-01-01T00:02:00"))
-        {
-            ;
-        }
 
         if (currentWindData == null)
         {

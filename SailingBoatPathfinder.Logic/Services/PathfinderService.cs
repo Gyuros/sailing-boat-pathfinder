@@ -20,7 +20,7 @@ public class PathfinderService
         _travellingTimeService = travellingTimeService;
     }
 
-    public List<BoatPosition> FindPath(List<Coordinate> checkpoints, SailingBoat boat, DateTime startTime, Action<Coordinate, bool> action)
+    public List<BoatPosition> FindPath(List<Coordinate> checkpoints, SailingBoat boat, DateTime startTime)
     {
         checkpoints.ForEach(coordinate => _coordinateProviderService.RoundCoordinate(coordinate));
         Coordinate current = checkpoints.First();
@@ -29,7 +29,7 @@ public class PathfinderService
 
         foreach (Coordinate next in checkpoints.Skip(1))
         {
-            List<BoatPosition> partialPath = FindPathBetween(current, next, startTime, boat, action);
+            List<BoatPosition> partialPath = FindPathBetween(current, next, startTime, boat);
             
             BoatPosition partialFirst = partialPath.FirstOrDefault()!;
             partialFirst.From = partialLast;
@@ -42,18 +42,7 @@ public class PathfinderService
         return path;
     }
 
-    public double MaxDistance { get; set; } = double.PositiveInfinity;
-    private void Info(Coordinate start, Coordinate finish, Coordinate current, List<BoatPosition> openPositions)
-    {
-        var currDistance = GeoCalculator.GetDistance(finish, current,1, DistanceUnit.Kilometers);
-        if (currDistance < MaxDistance)
-        {
-            MaxDistance = currDistance;
-            Console.WriteLine($"{MaxDistance} {openPositions.Count}");
-        }
-    }
-
-    private List<BoatPosition> FindPathBetween(Coordinate start, Coordinate finish, DateTime startTime, SailingBoat boat, Action<Coordinate, bool> action)
+    private List<BoatPosition> FindPathBetween(Coordinate start, Coordinate finish, DateTime startTime, SailingBoat boat)
     {
         double estimatedTimeFromStartToFinish = _travellingTimeService.TimeToTravel(start, finish, startTime, boat);
         BoatPosition startPosition = new BoatPosition(null, 0, estimatedTimeFromStartToFinish, start);
@@ -65,7 +54,6 @@ public class PathfinderService
         while (openPositions.Count > 0)
         {
             BoatPosition current = openPositions.MinBy(neighbour => neighbour.TimeFromStartToFinish)!;
-            action(current.Coordinate, false);
 
             if (GeoCalculator.GetDistance(current.Coordinate, finish, 0, DistanceUnit.Meters) < 50)
             {
@@ -92,10 +80,6 @@ public class PathfinderService
                 if (!(timeFromStartToNeighbour < currentNeighbour.TimeFromStart))
                 {
                     continue;
-                }
-                else
-                {
-                    ;
                 }
                 
                 currentNeighbour.From = current;

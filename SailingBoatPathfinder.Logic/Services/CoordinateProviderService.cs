@@ -9,8 +9,6 @@ public class CoordinateProviderService
     private readonly int _directionResolutionLevel;
     private readonly double _nodeDivergence;
 
-    // irányok száma = 8 * directionResolutionLevel
-    // decimalPrecision => fordítottan arányos a csúcsok közti távolsággal
     public CoordinateProviderService(int decimalPrecision = 4, int directionResolutionLevel = 3)
     {
         _decimalPrecision = decimalPrecision;

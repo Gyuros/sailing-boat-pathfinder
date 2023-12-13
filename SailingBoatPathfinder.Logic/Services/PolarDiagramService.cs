@@ -16,11 +16,6 @@ public class PolarDiagramService
         SailingBoatPolarData? topRight = right.FirstOrDefault()?.LastOrDefault(data => data.WindAngle <= windAngle);
         SailingBoatPolarData? bottomRight = right.FirstOrDefault()?.FirstOrDefault(data => data.WindAngle >= windAngle);
 
-        // if (windAngle < 46 && windAngle > 45)
-        // {
-        //     ;
-        // }
-
         if (topLeft == null || bottomLeft == null)
         {
             return 0;
